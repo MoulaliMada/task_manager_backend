@@ -16,10 +16,10 @@ public class Tasks {
     @GeneratedValue(strategy =GenerationType.IDENTITY)
     private long id;
     
-    @Column(name="taskname" ,nullable = false)
+    @Column(name="taskname",nullable = false)
     private String taskname;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private Users users;
 }
