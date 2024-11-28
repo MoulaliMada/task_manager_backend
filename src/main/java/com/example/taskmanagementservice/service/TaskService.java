@@ -23,9 +23,9 @@ public class TaskService implements TaskRepository{
     private UserJpaRepository userJpaRepository;
 
     @Override
-    public Tasks saveTask(long taskId, Tasks tasks) {
+    public Tasks saveTask(long userId, Tasks tasks) {
         try{
-            Users user=userJpaRepository.findById(taskId).get();
+            Users user=userJpaRepository.findById(userId).get();
             tasks.setUsers(user);
             return taskJpaRepository.save(tasks);
         } catch(NoSuchElementException e){
@@ -35,20 +35,39 @@ public class TaskService implements TaskRepository{
 
     @Override
     public List<Tasks> getAllTasksByUserId(long userId) {
-        List<Long> idList = new ArrayList<>();
-        idList.add(userId); 
-        List<Tasks> tasks = taskJpaRepository.findAllByUserId(idList);
-        return tasks;
+        userJpaRepository.findById(userId).orElseThrow(
+        ()-> new ResponseStatusException(HttpStatus.NOT_FOUND) 
+        );
+        return taskJpaRepository.findAllByUsersId(userId);
     }
 
     @Override
-    public Tasks getTaskById(long taskId) {
-        try{
-            Tasks task=taskJpaRepository.findById(taskId).get();
-            return task;
-        }catch(Exception e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    public Tasks getTaskById(long userId, long taskId) {
+        Users user= userJpaRepository.findById(userId).orElseThrow(
+        ()-> new ResponseStatusException(HttpStatus.NOT_FOUND ,"Wrong user")
+        );
+        Tasks task=taskJpaRepository.findById(taskId).orElseThrow(
+            ()-> new ResponseStatusException(HttpStatus.NOT_FOUND ,"task not found") 
+            );
+        if(user.getId() != task.getUsers().getId()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"task is not belongs to user"); 
+        }    
+        return task;
+    }
+
+    @Override
+    public void deleteTaskById(long userId, long taskId) {
+        Users user= userJpaRepository.findById(userId).orElseThrow(
+        ()-> new ResponseStatusException(HttpStatus.NOT_FOUND ,"Wrong user")
+        );
+        Tasks task=taskJpaRepository.findById(taskId).orElseThrow(
+            ()-> new ResponseStatusException(HttpStatus.NOT_FOUND ,"task not found") 
+            );
+        if(user.getId() != task.getUsers().getId()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"task is not belongs to user"); 
+        }    
+        taskJpaRepository.deleteById(taskId); //delete the task
+        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
     }
 
     

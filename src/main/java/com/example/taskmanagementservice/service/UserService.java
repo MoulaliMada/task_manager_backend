@@ -35,7 +35,6 @@ public class UserService implements UserRepository{
 
     @Override
     public ArrayList<Users> getAllUsers() {
-        System.out.println("allUsers");
         List<Users> allUsers=userJpaRepository.findAll();
         ArrayList<Users> users=new ArrayList<>(allUsers);
         return users;

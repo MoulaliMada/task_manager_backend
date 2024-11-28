@@ -9,8 +9,5 @@ import com.example.taskmanagementservice.model.Tasks;
 
 @Repository
 public interface TaskJpaRepository extends JpaRepository<Tasks ,Long> {
-
-    List<Tasks> findAllByUserId(List<Long> idList);
-
-    
+    List<Tasks> findAllByUsersId(Long userId);
 } 

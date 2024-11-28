@@ -3,6 +3,7 @@ package com.example.taskmanagementservice.controller;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +28,13 @@ public class TaskController {
         return taskService.getAllTasksByUserId(userId);
     }
 
-    @GetMapping("/{taskId}/tasks")
-    public Tasks getTaskById(@PathVariable(name="taskId") long taskId){
-        return taskService.getTaskById(taskId);
+    @GetMapping("/{userId}/tasks/{taskId}")
+    public Tasks getTaskById(@PathVariable(name="userId") long userId, @PathVariable(name="taskId") long taskId){
+        return taskService.getTaskById(userId,taskId);
+    }
+
+    @DeleteMapping("/{userId}/tasks/{taskId}")
+    public void deleteTaskById(@PathVariable(name="userId") long userId, @PathVariable(name="taskId") long taskId){
+        taskService.deleteTaskById(userId,taskId);
     }
 }
